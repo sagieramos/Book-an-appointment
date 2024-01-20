@@ -264,10 +264,34 @@ Devise.setup do |config|
   #
   # The "*/*" below is required to match Internet Explorer requests.
   #config.navigational_formats = ['*/*', :html, :turbo_stream]
-  config.navigational_formats = [:json]
+  # config.navigational_formats = [:json]
+  config.navigational_formats = []
 
   # The default HTTP method used to sign out a resource. Default is :delete.
   config.sign_out_via = :delete
+  
+  # config.jwt do |jwt|
+	#  jwt.secret = ENV['DEVISE_JWT_SECRET_KEY'] # Set a secure secret key
+	 # jwt.dispatch_requests = [['POST', %r{^/auth/login$}]]
+	 # jwt.revocation_requests = [['DELETE', %r{^/auth/logout$}]]
+	 # jwt.expiration_time = 1.day.to_i
+  # end
+ 
+  #config.jwt do |jwt|
+   # jwt.secret = ENV['DEVISE_JWT_SECRET_KEY']
+  #end
+  
+  config.jwt do |jwt|
+  jwt.secret = ENV['SECRET_KEY']
+  jwt.dispatch_requests = [
+    ['POST', %r{^/auth/login$}]
+  ]
+  jwt.revocation_requests = [
+    ['DELETE', %r{^/auth/logout$}]
+  ]
+  jwt.expiration_time = 30.minutes.to_i
+end
+
 
   # ==> OmniAuth
   # Add a new OmniAuth provider. Check the wiki for more information on setting

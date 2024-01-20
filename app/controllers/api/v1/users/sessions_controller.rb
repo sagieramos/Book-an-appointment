@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class Api::V1::Users::SessionsController < Devise::SessionsController
   # before_action :configure_sign_in_params, only: [:create]
 
@@ -9,15 +7,18 @@ class Api::V1::Users::SessionsController < Devise::SessionsController
   # end
 
   # POST /resource/sign_in
-  # def create
-  #   super
-  # end
 
   # DELETE /resource/sign_out
   # def destroy
   #   super
   # end
 
+  def destroy
+    # Custom logic before sign-out if needed
+
+    #    (Devise.sign_out_all_scopes ? sign_out : sign_out(resource_name))
+    #    render json: { success: true, message: 'Logged out successfully' }, status: :ok
+  end
   # protected
 
   # If you have extra params to permit, append them to the sanitizer.
