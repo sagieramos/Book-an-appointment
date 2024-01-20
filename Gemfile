@@ -33,7 +33,7 @@ gem 'bootsnap', require: false
 # gem "image_processing", "~> 1.2"
 
 # Use Rack CORS for handling Cross-Origin Resource Sharing (CORS), making cross-origin Ajax possible
- gem "rack-cors"
+gem 'rack-cors'
 
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
@@ -47,9 +47,8 @@ end
 
 gem 'rubocop', '>= 1.0', '< 2.0'
 
-gem "devise", "~> 4.9"
+gem 'devise', '~> 4.9'
 
+gem 'devise-jwt', '~> 0.11.0'
 
-gem "devise-jwt", "~> 0.11.0"
-
-gem "jsonapi-serializer", "~> 2.2"
+gem 'jsonapi-serializer', '~> 2.2'
