@@ -15,10 +15,7 @@ class Api::V1::Users::SessionsController < Devise::SessionsController
   # end
 
   # def destroy
-  # Custom logic before sign-out if needed
-
-  #    (Devise.sign_out_all_scopes ? sign_out : sign_out(resource_name))
-  #    render json: { success: true, message: 'Logged out successfully' }, status: :ok
+  #   super
   # end
   protected
 
