@@ -10,20 +10,3 @@
 
 # db/seeds.rb
 
-# Create Users
-user1 = User.create(username: 'john_doe', first_name: 'John', last_name: 'Doe', city: 'New York')
-user2 = User.create(username: 'jane_smith', first_name: 'Jane', last_name: 'Smith', city: 'Los Angeles')
-
-# Create Items
-item1 = Item.create(admin: user1, name: 'Item 1', image: 'image_data_1', description: 'Description 1', city: 'Chicago')
-item2 = Item.create(admin: user1, name: 'Item 2', image: 'image_data_2', description: 'Description 2', city: 'San Francisco')
-item3 = Item.create(admin: user2, name: 'Item 3', image: 'image_data_3', description: 'Description 3', city: 'Seattle')
-
-# Create Reservations
-reservation1 = Reservation.create(customer: user2, reserve_for_use_date: Date.today, city: 'Los Angeles')
-reservation2 = Reservation.create(customer: user1, reserve_for_use_date: Date.tomorrow, city: 'New York')
-
-# Create ReservationItems
-ReservationItem.create(reservation: reservation1, item: item1)
-ReservationItem.create(reservation: reservation1, item: item2)
-ReservationItem.create(reservation: reservation2, item: item3)
