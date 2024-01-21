@@ -1,8 +1,12 @@
 Rails.application.routes.draw do
 namespace :api do
   namespace :v1 do
-    resources :users, param: :username, only: [:index, :show, :create, :update, :destroy]
-    resources :reservations, only: [:index, :show, :create, :update, :destroy]
+    resources :items, only: [:index, :show, :create, :update, :destroy]
+    resources :users, param: :username, path: '', only: [:index, :show, :create, :update, :destroy] do
+      resources :reservations, only: [:index, :show, :create, :update, :destroy] do
+        resources :items, only: [:index, :show]
+      end
+    end
     
     get 'reservations/index_all', to: 'reservations#index_all'
   end

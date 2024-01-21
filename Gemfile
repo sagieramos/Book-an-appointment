@@ -56,3 +56,5 @@ gem 'jsonapi-serializer', '~> 2.2'
 gem 'cancancan', '~> 3.5'
 
 gem 'active_model_serializers', '~> 0.10.14'
+
+gem 'will_paginate', '~> 4.0'
