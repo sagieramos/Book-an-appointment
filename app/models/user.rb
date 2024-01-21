@@ -14,6 +14,8 @@ class User < ApplicationRecord
   validates :first_name, :last_name, presence: true, length: { maximum: 50 }
   validates :first_name, :last_name, format: { with: /\A[a-zA-Z]+\z/, message: 'only allows letters' }
   validates :email, presence: true, length: { maximum: 50 }
+  ROLES = %w[user admin superuser].freeze
+  validates :role, inclusion: { in: ROLES, allow_nil: true }
 
   has_many :reservations, foreign_key: 'customer_id'
   has_many :items, foreign_key: 'admin_id'

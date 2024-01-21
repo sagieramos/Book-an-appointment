@@ -3,6 +3,8 @@ namespace :api do
   namespace :v1 do
     resources :users, param: :username, only: [:index, :show, :create, :update, :destroy]
     resources :reservations, only: [:index, :show, :create, :update, :destroy]
+    
+    get 'reservations/index_all', to: 'reservations#index_all'
   end
 end
  # devise_for :users

@@ -1,7 +1,7 @@
 class Api::V1::ReservationsController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_reservation, only: [:show, :update, :destroy]
-  before_action :authorize_user_reservation, only: [:show, :update, :destroy]
+  before_action :set_reservation, only: %i[show update destroy]
+  before_action :authorize_user_reservation, only: %i[show update destroy]
   before_action :authorize_admin, only: [:index_all]
 
   # GET /api/v1/reservations
@@ -10,17 +10,17 @@ class Api::V1::ReservationsController < ApplicationController
 
     render json: {
       status: { code: 200, message: 'Reservations retrieved successfully.' },
-      data: ActiveModelSerializers::SerializableResource.new(@reservations, each_serializer: ReservationSerializer).as_json
+      data: @reservations.map { |reservation| ReservationSerializer.new(reservation).serializable_hash[:data] }
     }, status: :ok
   end
-  
-    # GET /api/v1/reservations/index_all
+
+  # GET /api/v1/reservations/index_all
   def index_all
     @reservations = Reservation.includes(:items).all
 
     render json: {
       status: { code: 200, message: 'All Reservations retrieved successfully.' },
-      data: ActiveModelSerializers::SerializableResource.new(@reservations, each_serializer: ReservationSerializer).as_json
+      data: ReservationSerializer.new(@reservations).serializable_hash[:data].map { |r| r[:attributes] }
     }, status: :ok
   end
 
@@ -28,7 +28,7 @@ class Api::V1::ReservationsController < ApplicationController
   def show
     render json: {
       status: { code: 200, message: 'Reservation retrieved successfully.' },
-      data: Api::V1::ReservationSerializer.new(@reservation).as_json
+      data: ReservationSerializer.new(@reservation).serializable_hash[:data][:attributes]
     }, status: :ok
   end
 
@@ -39,7 +39,7 @@ class Api::V1::ReservationsController < ApplicationController
     if @reservation.save
       render json: {
         status: { code: 201, message: 'Reservation created successfully.' },
-        data: Api::V1::ReservationSerializer.new(@reservation).as_json
+        data: ReservationSerializer.new(@reservation).serializable_hash[:data][:attributes]
       }, status: :created
     else
       render json: {
@@ -55,7 +55,7 @@ class Api::V1::ReservationsController < ApplicationController
     if @reservation.update(reservation_params)
       render json: {
         status: { code: 200, message: 'Reservation updated successfully.' },
-        data: ReservationSerializer.new(@reservation).as_json
+        data: ReservationSerializer.new(@reservation).serializable_hash[:data][:attributes]
       }, status: :ok
     else
       render json: {
@@ -83,21 +83,15 @@ class Api::V1::ReservationsController < ApplicationController
 
   private
 
-  def set_reservation
-    @reservation = Reservation.find(params[:id])
+  def authorize_admin
+    authorize! :read, Reservation
   end
 
-  def authorize_user_reservation
-    unless current_user == @reservation&.customer
-      render json: {
-        status: 403,
-        message: 'You are not authorized to perform this action.'
-      }, status: :forbidden
-    end
+  def set_reservation
+    @reservation = Reservation.find(params[:id])
   end
 
   def reservation_params
     params.require(:reservation).permit(:reserve_for_use_date, :city, item_ids: [])
   end
 end
-

@@ -45,14 +45,14 @@ class Api::V1::UsersController < ApplicationController
       }, status: :not_found
     end
   end
-  
+
   # DELETE /api/v1/users/:username
   def destroy
     @user = User.find_by(username: params[:username])
 
     if @user && authorize_user(@user) && @user.destroy
       render json: {
-        status: 200, 
+        status: 200,
         message: 'User deleted successfully.'
       }, status: :ok
     else
@@ -65,7 +65,7 @@ class Api::V1::UsersController < ApplicationController
   end
 
   private
-  
+
   def authorize_user(user)
     user == current_user
   end
@@ -74,4 +74,3 @@ class Api::V1::UsersController < ApplicationController
     params.require(:user).permit(:first_name, :last_name, :city, :email)
   end
 end
-
