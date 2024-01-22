@@ -12,17 +12,11 @@ class Ability
     can :manage, User, id: user.id
     can :manage, Reservation, customer_id: user.id
 
-    return unless user.role.present?
+    return unless user.admin?
 
-    case user.role
-    when 'admin'
-      # Admin users have additional permissions
-      can :read, Reservation
-      can :manage, Item
-    when 'superuser'
-      # Superusers have full management permissions on all resources
-      can :manage, :all
-    end
+    can :read, [User, Reservation]
+    can :manage, Item
+
     #
     # The first argument to `can` is the action you are giving the user
     # permission to do.

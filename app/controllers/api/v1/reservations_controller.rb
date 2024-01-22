@@ -1,7 +1,6 @@
 class Api::V1::ReservationsController < ApplicationController
   before_action :authenticate_user!
   before_action :set_reservation, only: %i[show update destroy]
-  before_action :authorize_user_reservation, only: %i[show update destroy]
   before_action :authorize_admin, only: [:index_all]
 
   # GET /api/v1/reservations
@@ -84,7 +83,7 @@ class Api::V1::ReservationsController < ApplicationController
   private
 
   def authorize_admin
-    authorize! :read, Reservation
+    current_user.admin?
   end
 
   def set_reservation

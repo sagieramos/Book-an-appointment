@@ -1,6 +1,5 @@
 class Api::V1::ItemsController < ApplicationController
   before_action :set_item, :username, only: %i[show update destroy]
-  load_and_authorize_resource
 
   rescue_from CanCan::AccessDenied do |_exception|
     render json: { error: 'Unauthorized' }, status: :unauthorized
