@@ -1,7 +1,7 @@
 Rails.application.routes.draw do
 namespace :api do
   namespace :v1 do
-    resources :items, only: [:index, :show, :create, :update, :destroy]
+    resources :items, path: '#/items', only: [:index, :show, :create, :update, :destroy]
     resources :users, param: :username, path: '', only: [:index, :show, :create, :update, :destroy] do
       resources :reservations, only: [:index, :show, :create, :update, :destroy] do
         resources :items, only: [:index, :show]
@@ -19,7 +19,7 @@ end
   get "up" => "rails/health#show", as: :rails_health_check
 
   # Defines the root path route ("/")
-  # root "posts#index"
+  root "api/v1/items#index"
   
 
   # config/routes.rb
