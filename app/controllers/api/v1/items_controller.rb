@@ -1,41 +1,47 @@
 class Api::V1::ItemsController < ApplicationController
-  before_action :set_item, :username, only: %i[show update destroy]
+  before_action :set_item, only: %i[show update destroy]
+  before_action :set_user, only: [:index]
 
   rescue_from CanCan::AccessDenied do |_exception|
     render json: { error: 'Unauthorized' }, status: :unauthorized
   end
 
-  # GET /api/v1/%23/items
+  # GET /api/v1/:username/items
   def index
-    @items = Item.all
-    items_attributes = if current_user.admin?
-                         @items.map { |item| AdminItemSerializer.new(item).serializable_hash[:data][:attributes] }
-                       else
-                         @items.map { |item| ItemSerializer.new(item).serializable_hash[:data][:attributes] }
-                       end
+    per_page = params[:per_page] || 10
+    page = params[:page] || 1
+
+    @items = @user.items.includes(:reservations).paginate(page:, per_page:)
+    items_attributes = serialize_items(@items)
 
     render json: {
-      status: { code: 200, message: 'Items retrieved successfully.', user: username },
-      data: items_attributes
+      status: { code: 200, message: 'Items retrieved successfully.' },
+      data: items_attributes,
+      meta: {
+        total_pages: @items.total_pages,
+        current_page: @items.current_page,
+        per_page: @items.per_page,
+        total_count: @items.total_entries
+      }
     }, status: :ok
   end
 
-  # GET /api/v1/%23/items/:id
+  # GET /api/v1/:username/items/:id
   def show
     render json: {
-      status: { code: 200, message: 'Item retrieved successfully.', user: username },
+      status: { code: 200, message: 'Item retrieved successfully.' },
       data: ItemSerializer.new(@item).serializable_hash[:data][:attributes]
     }, status: :ok
   end
 
-  # POST /api/v1/%23/items
+  # POST /api/v1/:username/items
   def create
-    @item = Item.new(item_params)
+    @item = Item.new(item_params.merge(admin_id: current_user.id))
 
     if @item.save
       render json: {
-        status: { code: 201, message: 'Item created successfully.', user: username },
-        data: ItemSerializer.new(@item).as_json
+        status: { code: 201, message: 'Item created successfully.' },
+        data: ItemSerializer.new(@item).serializable_hash[:data][:attributes]
       }, status: :created
     else
       render json: {
@@ -46,11 +52,11 @@ class Api::V1::ItemsController < ApplicationController
     end
   end
 
-  # PATCH/PUT /api/v1/%23/items/:id
+  # PATCH/PUT /api/v1/:username/items/:id
   def update
     if @item.update(item_params)
       render json: {
-        status: { code: 200, message: 'Item updated successfully.', user: username },
+        status: { code: 200, message: 'Item updated successfully.' },
         data: ItemSerializer.new(@item).serializable_hash[:data][:attributes]
       }, status: :ok
     else
@@ -66,7 +72,7 @@ class Api::V1::ItemsController < ApplicationController
   def destroy
     if @item.destroy
       render json: {
-        status: { code: 200, message: 'Item deleted successfully.', user: username }
+        status: { code: 200, message: 'Item deleted successfully.' }
       }, status: :ok
     else
       render json: {
@@ -77,17 +83,53 @@ class Api::V1::ItemsController < ApplicationController
     end
   end
 
+  # POST /api/v1/items/:id/add_reservation
+  def add_reservation
+    reservation_id = params[:reservation_id].to_i
+    @item.reservations << Reservation.find(reservation_id) unless @item.reservations.include?(reservation_id)
+
+    render json: {
+      status: { code: 200, message: 'Reservation added to item successfully.' },
+      data: ItemSerializer.new(@item).serializable_hash[:data][:attributes]
+    }, status: :ok
+  end
+
+  # POST /api/v1/items/:id/remove_reservation
+  def remove_reservation
+    reservation_id = params[:reservation_id].to_i
+    @item.reservations.delete(Reservation.find(reservation_id))
+
+    render json: {
+      status: { code: 200, message: 'Reservation removed from item successfully.' },
+      data: ItemSerializer.new(@item).serializable_hash[:data][:attributes]
+    }, status: :ok
+  end
+
   private
+
+  def set_user
+    username = params[:user_username]
+
+    @user = User.find_by(username:)
+
+    return if @user
+
+    render json: { error: "User with username '#{username}' not found." }, status: :not_found
+  end
 
   def set_item
     @item = Item.find(params[:id])
   end
 
-  def username
-    current_user&.username || '__guest__'
+  def item_params
+    params.require(:item).permit(:name, :description, :image, :city, reservation_id: [])
   end
 
-  def item_params
-    params.require(:item).permit(:name, :description, :other_attributes)
+  def serialize_items(items)
+    if current_user.admin?
+      items.map { |item| AdminItemSerializer.new(item).serializable_hash[:data][:attributes] }
+    else
+      items.map { |item| ItemSerializer.new(item).serializable_hash[:data][:attributes] }
+    end
   end
 end

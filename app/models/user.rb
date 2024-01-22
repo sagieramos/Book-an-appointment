@@ -1,4 +1,6 @@
 class User < ApplicationRecord
+  has_many :reservations, foreign_key: 'customer_id'
+  has_many :items, foreign_key: 'admin_id'
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable, :trackable, and :omniauthable
   include Devise::JWT::RevocationStrategies::JTIMatcher

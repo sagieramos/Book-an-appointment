@@ -1,22 +1,44 @@
 Rails.application.routes.draw do
-namespace :api do
-  namespace :v1 do
-    resources :items, path: '#/items', only: [:index, :show, :create, :update, :destroy]
-    resources :users, only: [:index]
-    resources :users, param: :username, path: '', only: [:show, :create, :update, :destroy] do
-      member do
-        post 'make_admin'
-        post 'remove_admin'
+  namespace :api do
+    namespace :v1 do
+      resources :pages, path: 'p' do
+        collection do
+          get :reservations
+          get :items
+        end
       end
-      resources :reservations, only: [:index, :show, :create, :update, :destroy] do
-        resources :items, only: [:index, :show]
+  
+      resources :users, only: [:index] do
+        collection do
+          get :my_profile
+        end
+      end
+  
+      resources :users, param: :username, path: '', only: [:show, :create, :update, :destroy] do
+        member do
+          post :make_admin
+          post :remove_admin
+        end
+  
+        resources :reservations, only: [:index, :show, :create, :update, :destroy] do
+          resources :items, only: [:index, :show]
+          member do
+            post :add_item
+            post :remove_item
+          end
+        end
+  
+        resources :items, only: [:index, :show, :create, :destroy] do
+          resources :reservations, only: [:index, :show]
+          member do
+            post :add_reservation
+            post :remove_reservation
+          end
+        end
       end
     end
-    
-    get 'reservations/index_all', to: 'reservations#index_all'
   end
-end
- # devise_for :users
+   # devise_for :users
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
@@ -24,7 +46,7 @@ end
   get "up" => "rails/health#show", as: :rails_health_check
 
   # Defines the root path route ("/")
-  root "api/v1/items#index"
+  root "api/v1/pages#index"
   
 
   # config/routes.rb

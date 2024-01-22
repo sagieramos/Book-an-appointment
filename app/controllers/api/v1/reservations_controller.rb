@@ -1,29 +1,19 @@
 class Api::V1::ReservationsController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_reservation, only: %i[show update destroy]
-  before_action :authorize_admin, only: [:index_all]
+  before_action :set_reservation, only: %i[show update destroy add_item remove_item]
+  before_action :set_user, only: %i[index show create update destroy]
 
   rescue_from CanCan::AccessDenied do |_exception|
     render json: { error: 'Unauthorized' }, status: :unauthorized
   end
 
-  # GET /api/v1/reservations
+  # GET /api/v1/:username/reservations
   def index
-    @reservations = current_user.reservations.includes(:items)
+    @reservations = @user.reservations.includes(:items)
 
     render json: {
       status: { code: 200, message: 'Reservations retrieved successfully.' },
       data: @reservations.map { |reservation| ReservationSerializer.new(reservation).serializable_hash[:data] }
-    }, status: :ok
-  end
-
-  # GET /api/v1/reservations/index_all
-  def index_all
-    @reservations = Reservation.includes(:items).all
-
-    render json: {
-      status: { code: 200, message: 'All Reservations retrieved successfully.' },
-      data: ReservationSerializer.new(@reservations).serializable_hash[:data].map { |r| r[:attributes] }
     }, status: :ok
   end
 
@@ -84,7 +74,39 @@ class Api::V1::ReservationsController < ApplicationController
     end
   end
 
+  # POST /api/v1/reservations/:id/add_item
+  def add_item
+    item_id = params[:item_id].to_i
+    @reservation.items << Item.find(item_id) unless @reservation.items.include?(item_id)
+
+    render json: {
+      status: { code: 200, message: 'Item added to reservation successfully.' },
+      data: ReservationSerializer.new(@reservation).serializable_hash[:data][:attributes]
+    }, status: :ok
+  end
+
+  # POST /api/v1/reservations/:id/remove_item
+  def remove_item
+    item_id = params[:item_id].to_i
+    @reservation.items.delete(Item.find(item_id))
+
+    render json: {
+      status: { code: 200, message: 'Item removed from reservation successfully.' },
+      data: ReservationSerializer.new(@reservation).serializable_hash[:data][:attributes]
+    }, status: :ok
+  end
+
   private
+
+  def set_user
+    username = params[:user_username]
+
+    @user = User.find_by(username:)
+
+    return if @user
+
+    render json: { error: "User with username '#{username}' not found." }, status: :not_found
+  end
 
   def authorize_admin
     current_user.admin?

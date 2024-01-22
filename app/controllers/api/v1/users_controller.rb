@@ -32,6 +32,14 @@ class Api::V1::UsersController < ApplicationController
     end
   end
 
+  # Get /api/v1/users/my_profile
+  def my_profile
+    render json: {
+      status: { code: 200, message: 'User information retrieved successfully.' },
+      data: UserSerializer.new(current_user).serializable_hash[:data][:attributes]
+    }, status: :ok
+  end
+
   # PATCH/PUT /api/v1/users/:username
   def update
     @user = User.find_by(username: params[:username])
