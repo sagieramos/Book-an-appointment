@@ -3,6 +3,10 @@ class Api::V1::ReservationsController < ApplicationController
   before_action :set_reservation, only: %i[show update destroy]
   before_action :authorize_admin, only: [:index_all]
 
+  rescue_from CanCan::AccessDenied do |_exception|
+    render json: { error: 'Unauthorized' }, status: :unauthorized
+  end
+
   # GET /api/v1/reservations
   def index
     @reservations = current_user.reservations.includes(:items)

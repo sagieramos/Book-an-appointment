@@ -2,7 +2,12 @@ Rails.application.routes.draw do
 namespace :api do
   namespace :v1 do
     resources :items, path: '#/items', only: [:index, :show, :create, :update, :destroy]
-    resources :users, param: :username, path: '', only: [:index, :show, :create, :update, :destroy] do
+    resources :users, only: [:index]
+    resources :users, param: :username, path: '', only: [:show, :create, :update, :destroy] do
+      member do
+        post 'make_admin'
+        post 'remove_admin'
+      end
       resources :reservations, only: [:index, :show, :create, :update, :destroy] do
         resources :items, only: [:index, :show]
       end

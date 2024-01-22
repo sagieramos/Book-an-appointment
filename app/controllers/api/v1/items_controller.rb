@@ -8,7 +8,7 @@ class Api::V1::ItemsController < ApplicationController
   # GET /api/v1/%23/items
   def index
     @items = Item.all
-    items_attributes = if current_user.present?
+    items_attributes = if current_user.admin?
                          @items.map { |item| AdminItemSerializer.new(item).serializable_hash[:data][:attributes] }
                        else
                          @items.map { |item| ItemSerializer.new(item).serializable_hash[:data][:attributes] }

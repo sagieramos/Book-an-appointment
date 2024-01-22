@@ -1,6 +1,10 @@
 class Api::V1::UsersController < ApplicationController
   before_action :authenticate_user!
 
+  rescue_from CanCan::AccessDenied do |_exception|
+    render json: { error: 'Unauthorized' }, status: :unauthorized
+  end
+
   # GET /api/v1/users
   def index
     @users = User.all
@@ -61,6 +65,30 @@ class Api::V1::UsersController < ApplicationController
         message: 'User not found or unauthorized to perform this action.',
         errors: @user&.errors&.full_messages
       }, status: :not_found
+    end
+  end
+
+  # /api/v1/:username/remove_admin
+  def make_admin
+    @user = User.find_by(username: params[:username])
+    authorize! :make_admin, @user
+    if @user
+      @user.update(admin: true)
+      render json: { message: "#{@user.username} is now an admin." }
+    else
+      render json: { error: 'User not found with the given username.' }, status: :not_found
+    end
+  end
+
+  # /api/v1/:username/remove_admin
+  def remove_admin
+    @user = User.find_by(username: params[:username])
+    authorize! :remove_admin, @user
+    if @user
+      @user.update(admin: false)
+      render json: { message: "#{@user.username} is no longer an admin." }
+    else
+      render json: { error: 'User not found with the given username.' }, status: :not_found
     end
   end
 
