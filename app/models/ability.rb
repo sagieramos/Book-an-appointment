@@ -10,8 +10,9 @@ class Ability
 
     # Regular users can manage their own profile and reservations they created
     can %i[create read update destroy], User, id: user.id
-    # can :manage, User, id: user.id
+    can :manage, User, id: user.id
     can :manage, Reservation, customer_id: user.id
+    # can :manage, User
 
     return unless user.admin?
 

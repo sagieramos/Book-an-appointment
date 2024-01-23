@@ -18,7 +18,7 @@ class Api::V1::PagesController < ApplicationController
                Item.paginate(page:, per_page:)
              end
 
-    items_attributes = serialize_items(@items, current_user.admin?)
+    items_attributes = serialize_items(@items, current_user&.admin?)
 
     render json: {
       status: { code: 200, message: 'Pages Items retrieved successfully.', user: username },

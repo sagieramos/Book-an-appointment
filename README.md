@@ -143,10 +143,43 @@ This endpoint allows the user to authenticate and login.
 - Response
 ``` JSON
 {
-  "email": "joe@gmail.com",
-  "password": "your_password"
+  "user": {
+    "email": "joe@gmail.com",
+    "password": "your_password"
+  }
 }
 ```
+- Response
+
+```JSON
+{
+  "status": {
+    "code": 0,
+    "message": "",
+    "current_user": ""
+  },
+  "data": {
+    "first_name": "",
+    "last_name": "",
+    "city": "",
+    "username": "",
+    "email": "",
+    "admin": true
+  }
+}
+```
+
+- status (object)
+   - code (number): The status code of the response.
+   - message (string): Any additional message related to the status.
+   - current_user (string): The current user's details.
+
+- data (object)
+   - first_name (string): The first name of the user.
+   - last_name (string): The last name of the user.
+   - city (string): The city of the user.
+   - username (string): The username of the user.
+   - email (string): The email of the user.
 ---
 
 #### Get Items
@@ -183,37 +216,6 @@ This endpoint makes an HTTP GET request to retrieve a list of items.
     "current_page": 0,
     "per_page": 0,
     "total_count": 0
-  }
-}
-```
-
-- status (object)
-   - code (number): The status code of the response.
-   - message (string): Any additional message related to the status.
-   - current_user (string): The current user's details.
-
-- data (object)
-   - first_name (string): The first name of the user.
-   - last_name (string): The last name of the user.
-   - city (string): The city of the user.
-   - username (string): The username of the user.
-   - email (string): The email of the user.
-
-Example:
-```JSON
-{
-  "status": {
-    "code": 0,
-    "message": "",
-    "current_user": ""
-  },
-  "data": {
-    "first_name": "",
-    "last_name": "",
-    "city": "",
-    "username": "",
-    "email": "",
-    "admin": true
   }
 }
 ```

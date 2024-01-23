@@ -1,6 +1,6 @@
 class ApplicationController < ActionController::API
   include Devise::JWT::Concerns::SetUserByToken
-  load_and_authorize_resource
+  # load_and_authorize_resource
 
   # before_action :authenticate_user!, except: [:public_action]
 
