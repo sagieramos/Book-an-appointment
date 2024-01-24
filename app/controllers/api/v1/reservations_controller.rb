@@ -15,19 +15,35 @@ class Api::V1::ReservationsController < ApplicationController
                     else
                       @user.reservations.includes(:items)
                     end
-  
+
     render json: {
       status: { code: 200, message: 'Reservations retrieved successfully.' },
-      data: @reservations.map { |reservation| ReservationSerializer.new(reservation).serializable_hash[:data] }
+      data: @reservations.map do |reservation|
+              ReservationSerializer.new(reservation).serializable_hash[:data][:attributes]
+            end
     }, status: :ok
   end
-  
 
   # GET /api/v1/reservations/:id
   def show
+    page = params[:page] || 1
+    per_page = params[:per_page] || 10
+
+    items = @reservation.items.paginate(page:, per_page:)
+    serialized_items = items.map { |item| ItemSerializer.new(item).serializable_hash[:data][:attributes] }
+
     render json: {
       status: { code: 200, message: 'Reservation retrieved successfully.' },
-      data: ReservationSerializer.new(@reservation).serializable_hash[:data][:attributes]
+      data: {
+        reservation: ReservationshowSerializer.new(@reservation).serializable_hash[:data][:attributes],
+        items: serialized_items
+      },
+      meta: {
+        total_pages: items.total_pages,
+        current_page: items.current_page,
+        total_items: items.total_entries,
+        per_page: items.per_page
+      }
     }, status: :ok
   end
 

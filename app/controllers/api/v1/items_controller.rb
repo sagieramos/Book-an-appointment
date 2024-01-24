@@ -11,15 +11,15 @@ class Api::V1::ItemsController < ApplicationController
     per_page = params[:per_page] || 10
     page = params[:page] || 1
     query = params[:query]
-  
-    if query.present?
-      @items = @user.items.search(query).includes(:reservations).paginate(page: page, per_page: per_page)
-    else
-      @items = @user.items.includes(:reservations).paginate(page: page, per_page: per_page)
-    end
-  
+
+    @items = if query.present?
+               @user.items.search(query).includes(:reservations).paginate(page:, per_page:)
+             else
+               @user.items.includes(:reservations).paginate(page:, per_page:)
+             end
+
     items_attributes = serialize_items(@items)
-  
+
     render json: {
       status: { code: 200, message: 'Items retrieved successfully.' },
       data: items_attributes,
@@ -31,7 +31,6 @@ class Api::V1::ItemsController < ApplicationController
       }
     }, status: :ok
   end
-  
 
   # GET /api/v1/:username/items/:id
   def show
