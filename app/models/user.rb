@@ -12,13 +12,10 @@ class User < ApplicationRecord
 
   before_validation :trim_string_attributes
 
-  validates :username, presence: true, uniqueness: true, length: { maximum: 50 }
+  validates :username, presence: true, uniqueness: true, length: { maximum: 30 }
   validates :first_name, :last_name, presence: true, length: { maximum: 50 }
   validates :first_name, :last_name, format: { with: /\A[a-zA-Z]+\z/, message: 'only allows letters' }
   validates :email, presence: true, length: { maximum: 50 }
-
-  has_many :reservations, foreign_key: 'customer_id'
-  has_many :items, foreign_key: 'admin_id'
 
   private
 

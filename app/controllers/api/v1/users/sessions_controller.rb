@@ -1,22 +1,27 @@
 class Api::V1::Users::SessionsController < Devise::SessionsController
-  # before_action :configure_sign_in_params, only: [:create]
-
   respond_to :json
-  # GET /resource/sign_in
-  # def new
-  #   super
-  # end
 
-  # POST /resource/sign_in
+  def create
+    login = params[:user][:login]
+    password = params[:user][:password]
 
-  # DELETE /resource/sign_out
-  # def destroy
-  #   super
-  # end
+    if login.present?
+      it_is_email = login.match?(Devise.email_regexp)
+      authentication_key = it_is_email ? :email : :username
 
-  # def destroy
-  #   super
-  # end
+      resource = User.find_for_database_authentication({ authentication_key => login&.downcase })
+
+      if resource&.valid_password?(password)
+        sign_in(resource_name, resource)
+        respond_with(resource)
+      else
+        render json: { error: 'Invalid login credentials' }, status: :unauthorized
+      end
+    else
+      render json: { error: 'Login (email or username) is required' }, status: :unprocessable_entity
+    end
+  end
+
   protected
 
   def respond_with(resource, _opts = {})
@@ -42,6 +47,6 @@ class Api::V1::Users::SessionsController < Devise::SessionsController
 
   # If you have extra params to permit, append them to the sanitizer.
   # def configure_sign_in_params
-  #   devise_parameter_sanitizer.permit(:sign_in, keys: [:attribute])
+  #   devise_parameter_sanitizer.permit(:sign_in, keys: [:username, :email, :password])
   # end
 end

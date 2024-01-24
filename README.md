@@ -14,6 +14,15 @@
       - [Auth Sign up](#auth-sign-up)
       - [Auth Login](#auth-login)
       - [Get Items](#get-items)
+      - [GET ```http:///api/v1/:username/reservations```](#get-httpapiv1usernamereservations)
+      - [GET ```http:///api/v1/:username/items```](#get-httpapiv1usernameitems)
+      - [POST ```http:///api/v1/:username/make_admin```](#post-httpapiv1usernamemake_admin)
+      - [POST ```http:///api/v1/:username/remove_admin```](#post-httpapiv1usernameremove_admin)
+    - [GET ```http://localhost:4000/api/v1/p/items```](#get-httplocalhost4000apiv1pitems)
+  - [Response Structure](#response-structure)
+      - [Data](#data)
+      - [Meta](#meta)
+      - [Client Customization](#client-customization)
     - [Deployment](#deployment)
   - [👥 Authors ](#-authors-)
   - [🔭 Future Features ](#-future-features-)
@@ -137,19 +146,20 @@ This endpoint allows the user to create a profile
 POST `http:///auth/login`
 This endpoint allows the user to authenticate and login.
 - Request Body
-  - email (string): The email of the user.
+  - login (string): This can either be email or username of the user.
   - password (string): The password of the user.
 
-- Response
+- Request
 ``` JSON
 {
   "user": {
-    "email": "joe@gmail.com",
+    "login": "joe@gmail.com",
     "password": "your_password"
   }
 }
 ```
-- Response
+Response
+- Body
 
 ```JSON
 {
@@ -168,7 +178,6 @@ This endpoint allows the user to authenticate and login.
   }
 }
 ```
-
 - status (object)
    - code (number): The status code of the response.
    - message (string): Any additional message related to the status.
@@ -180,6 +189,46 @@ This endpoint allows the user to authenticate and login.
    - city (string): The city of the user.
    - username (string): The username of the user.
    - email (string): The email of the user.
+
+- Header
+  - Authorization: Allows for stateless authentication, scalability, and can simplify the handling of authentication across multiple services
+
+Example request authorization key
+``` JS
+const axios = require('axios');
+let data = JSON.stringify({
+  "user": {
+    "login": "sagie",
+    "password": "your_password"
+  }
+});
+
+let config = {
+  method: <YOUR_HTTP_METHOD>,
+  maxBodyLength: Infinity,
+  url: 'http://example.com',
+  headers: { 
+    'authorization': 'Bearer <VALUE>', 
+    'Cookie': '_imuwahen_session=<VALUE>'
+  },
+  data : data
+};
+
+async function makeRequest() {
+  try {
+    const response = await axios.request(config);
+    console.log(JSON.stringify(response.data));
+  }
+  catch (error) {
+    console.log(error);
+  }
+}
+
+makeRequest();
+```
+
+- Header (object)
+  - authorization (string): Use to handle user authentication
 ---
 
 #### Get Items
@@ -222,7 +271,87 @@ This endpoint makes an HTTP GET request to retrieve a list of items.
 
 This endpoint retrieves a list of items with their details.
 
+---
 
+#### GET ```http:///api/v1/:username/reservations```
+
+- This endpoint makes an HTTP GET request to retrieve a list of reservations associated with a user by `:username`. The request does not contain a request body.
+The response to the request has a status code of 200, indicating a successful execution. The response body contains an array of reservation data, including reservation IDs, types, attributes, and item lists associated with each reservation.
+
+---
+#### GET ```http:///api/v1/:username/items```
+
+---
+
+#### POST ```http:///api/v1/:username/make_admin```
+
+- Make user an Admin. Admin has priviledge to manage items. 
+
+---
+
+#### POST ```http:///api/v1/:username/remove_admin```
+- Remove user from Admin
+
+---
+
+### GET ```http://localhost:4000/api/v1/p/items```
+
+## Response Structure
+
+The API response follows a standardized format:
+
+```json
+{
+  "status": {
+    "code": 200,
+    "message": "Pages Items retrieved successfully.",
+    "user": "sagie"
+  },
+  "data": [
+    // Array of item objects
+  ],
+  "meta": {
+    "total_pages": 1,
+    "current_page": 1,
+    "per_page": 10,
+    "total_count": 6
+  }
+}
+```
+#### Data
+The data array contains individual item objects, each with the following properties:
+
+- id: Unique identifier for the item.
+- name: Name of the item.
+- image: Image information (null if not available).
+- description: Description of the item.
+- city: City information (null if not specified).
+- created_at: Timestamp indicating the item's creation date.
+- updated_at: Timestamp indicating the item's last update date.
+- reserving_ids: Comma-separated list of reservation IDs associated with the item.
+- reserving_usernames: Comma-separated list of usernames associated with the reservations.
+
+
+#### Meta
+The meta object provides additional metadata about the paginated results:
+
+- total_pages: Total number of pages (e.g., 1).
+- current_page: Current page number (e.g., 1).
+- per_page: Number of items per page (e.g., 10).
+- total_count: Total number of items across all pages (e.g., 6).
+
+#### Client Customization
+Clients can customize their requests using the following query parameters:
+
+- per_page (Items Per Page): Specify the number of items per page.
+  Example: GET ```/api/items?page=1&per_page=20```
+
+- current_page (Current Page): Indicate which page to retrieve.
+Example: GET ```/api/items?page=2&per_page=10```
+
+Feel free to customize these parameters to suit your application's requirements.
+
+Feel free to customize these parameters to suit your application's requirements.
 
 ### Deployment
 
