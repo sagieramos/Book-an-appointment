@@ -83,6 +83,23 @@ class Api::V1::ItemsController < ApplicationController
     end
   end
 
+  # GET /api/v1/items/:id/reservations
+  def reservations
+    @reservations = @item.reservations.includes(:customer).paginate(page: params[:page], per_page: params[:per_page])
+    reservations_attributes = serialize_reservations(@reservations)
+
+    render json: {
+      status: { code: 200, message: 'Reservations retrieved successfully.' },
+      data: reservations_attributes,
+      meta: {
+        total_pages: @reservations.total_pages,
+        current_page: @reservations.current_page,
+        per_page: @reservations.per_page,
+        total_count: @reservations.total_entries
+      }
+    }, status: :ok
+  end
+
   # POST /api/v1/items/:id/add_reservation
   def add_reservation
     reservation_id = params[:reservation_id].to_i

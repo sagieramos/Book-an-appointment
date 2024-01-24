@@ -17,6 +17,11 @@ class User < ApplicationRecord
   validates :first_name, :last_name, format: { with: /\A[a-zA-Z]+\z/, message: 'only allows letters' }
   validates :email, presence: true, length: { maximum: 50 }
 
+  def self.search(query)
+    where('username LIKE ? OR first_name LIKE ? OR last_name LIKE ? OR email LIKE ?', "%#{query}%", "%#{query}%",
+          "%#{query}%", "%#{query}%")
+  end
+
   private
 
   def trim_string_attributes

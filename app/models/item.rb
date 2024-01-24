@@ -6,4 +6,8 @@ class Item < ApplicationRecord
   def reservation_list
     reservations.includes(:user)
   end
+
+  def self.search(query)
+    where('name LIKE ? OR description LIKE ? OR city LIKE ?', "%#{query}%", "%#{query}%", "%#{query}%")
+  end
 end

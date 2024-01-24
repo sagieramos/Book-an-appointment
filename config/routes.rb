@@ -5,6 +5,9 @@ Rails.application.routes.draw do
         collection do
           get :reservations
           get :items
+          get :search_items
+          get :search_reservations
+          get :search_users
         end
       end
   
@@ -25,6 +28,7 @@ Rails.application.routes.draw do
           member do
             post :add_item
             post :remove_item
+            get :items
           end
         end
   
@@ -33,6 +37,7 @@ Rails.application.routes.draw do
           member do
             post :add_reservation
             post :remove_reservation
+            get :reservations
           end
         end
       end

@@ -74,6 +74,16 @@ class Api::V1::ReservationsController < ApplicationController
     end
   end
 
+  # GET /api/v1/reservations/:id/items
+  def items
+    @items = @reservation.items
+
+    render json: {
+      status: { code: 200, message: 'Items retrieved successfully.' },
+      data: @items.map { |item| ItemSerializer.new(item).serializable_hash[:data][:attributes] }
+    }, status: :ok
+  end
+
   # POST /api/v1/reservations/:id/add_item
   def add_item
     item_id = params[:item_id].to_i

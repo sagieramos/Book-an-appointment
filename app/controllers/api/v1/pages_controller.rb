@@ -58,6 +58,69 @@ class Api::V1::PagesController < ApplicationController
     }, status: :ok
   end
 
+  # GET /api/v1/p/search_items
+  def search_items
+    per_page = params[:per_page] || 10
+    page = params[:page] || 1
+    query = params[:query]
+
+    @items = Item.search(query).paginate(page:, per_page:)
+    items_attributes = serialize_items(@items)
+
+    render json: {
+      status: { code: 200, message: 'Items retrieved successfully.' },
+      data: items_attributes,
+      meta: {
+        total_pages: @items.total_pages,
+        current_page: @items.current_page,
+        per_page: @items.per_page,
+        total_count: @items.total_entries
+      }
+    }, status: :ok
+  end
+
+  # GET /api/v1/p/search_reservations
+  def search_reservations
+    per_page = params[:per_page] || 10
+    page = params[:page] || 1
+    query = params[:query]
+
+    @reservations = Reservation.search(query).paginate(page:, per_page:)
+    reservation_attributes = serialize_reservations(@reservations)
+
+    render json: {
+      status: { code: 200, message: 'Reservations retrieved successfully.' },
+      data: reservation_attributes,
+      meta: {
+        total_pages: @reservations.total_pages,
+        current_page: @reservations.current_page,
+        per_page: @reservations.per_page,
+        total_count: @reservations.total_entries
+      }
+    }, status: :ok
+  end
+
+  # GET /api/v1/reservations/search_users
+  def search_users
+    per_page = params[:per_page] || 10
+    page = params[:page] || 1
+    query = params[:query]
+
+    @users = User.search(query).paginate(page:, per_page:)
+    user_attributes = serialize_users(@users)
+
+    render json: {
+      status: { code: 200, message: 'Users retrieved successfully.' },
+      data: user_attributes,
+      meta: {
+        total_pages: @users.total_pages,
+        current_page: @users.current_page,
+        per_page: @users.per_page,
+        total_count: @users.total_entries
+      }
+    }, status: :ok
+  end
+
   private
 
   def username

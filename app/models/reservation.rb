@@ -6,4 +6,8 @@ class Reservation < ApplicationRecord
   def paginated_item_list(page = 1, per_page = 10)
     items.paginate(page:, per_page:).to_a
   end
+
+  def self.search(query)
+    where('city LIKE ?', "%#{query}%")
+  end
 end
