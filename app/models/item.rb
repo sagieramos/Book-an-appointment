@@ -8,6 +8,6 @@ class Item < ApplicationRecord
   end
 
   def self.search(query)
-    where('name LIKE ? OR description LIKE ? OR city LIKE ?', "%#{query}%", "%#{query}%", "%#{query}%")
+    where('name ILIKE ? OR description ILIKE ? OR city ILIKE ?', "%#{query}%", "%#{query}%", "%#{query}%")
   end
 end

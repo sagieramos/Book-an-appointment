@@ -8,6 +8,6 @@ class Reservation < ApplicationRecord
   end
 
   def self.search(query)
-    where('city LIKE ?', "%#{query}%")
+    where('city ILIKE ?', "%#{query}%")
   end
 end

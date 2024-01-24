@@ -5,9 +5,7 @@ Rails.application.routes.draw do
         collection do
           get :reservations
           get :items
-          get :search_items
-          get :search_reservations
-          get :search_users
+          get :search
         end
       end
   

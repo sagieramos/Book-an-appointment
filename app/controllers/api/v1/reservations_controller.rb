@@ -9,13 +9,19 @@ class Api::V1::ReservationsController < ApplicationController
 
   # GET /api/v1/:username/reservations
   def index
-    @reservations = @user.reservations.includes(:items)
-
+    query = params[:query]
+    @reservations = if query.present?
+                      @user.reservations.search(query).includes(:items)
+                    else
+                      @user.reservations.includes(:items)
+                    end
+  
     render json: {
       status: { code: 200, message: 'Reservations retrieved successfully.' },
       data: @reservations.map { |reservation| ReservationSerializer.new(reservation).serializable_hash[:data] }
     }, status: :ok
   end
+  
 
   # GET /api/v1/reservations/:id
   def show

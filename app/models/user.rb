@@ -18,7 +18,7 @@ class User < ApplicationRecord
   validates :email, presence: true, length: { maximum: 50 }
 
   def self.search(query)
-    where('username LIKE ? OR first_name LIKE ? OR last_name LIKE ? OR email LIKE ?', "%#{query}%", "%#{query}%",
+    where('username ILIKE ? OR first_name ILIKE ? OR last_name LIKE ? OR email ILIKE ?', "%#{query}%", "%#{query}%",
           "%#{query}%", "%#{query}%")
   end
 

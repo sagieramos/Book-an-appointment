@@ -1,8 +1,6 @@
 class Api::V1::PagesController < ApplicationController
   before_action :authenticate_user!, except: [:items]
-
   respond_to :json
-
   rescue_from CanCan::AccessDenied do |_exception|
     render json: { error: 'Unauthorized' }, status: :unauthorized
   end
@@ -11,135 +9,118 @@ class Api::V1::PagesController < ApplicationController
     per_page = params[:per_page] || 10
     page = params[:page] || 1
     private_user = params[:private_user] || false
+    query = params[:query]
 
-    @items = if private_user
-               current_user.items.paginate(page:, per_page:)
-             else
-               Item.paginate(page:, per_page:)
-             end
+    items = if private_user
+              current_user.items
+            elsif query.present?
+              Item.search(query)
+            else
+              Item.all
+            end
 
-    items_attributes = serialize_items(@items, current_user&.admin?)
+    paginated_items = items.paginate(page:, per_page:)
+    items_attributes = serialize_items(paginated_items, current_user&.admin?)
 
-    render json: {
-      status: { code: 200, message: 'Pages Items retrieved successfully.', user: username },
-      data: items_attributes,
-      meta: {
-        total_pages: @items.total_pages,
-        current_page: @items.current_page,
-        per_page: @items.per_page,
-        total_count: @items.total_entries
-      }
-    }, status: :ok
+    render_response('Pages Items', items_attributes, paginated_items)
   end
 
-  # GET /api/v1/p/reservations
   def reservations
     per_page = params[:per_page] || 10
     page = params[:page] || 1
     private_user = params[:private_user] || false
+    query = params[:query]
 
     reservations = if current_user.admin? && private_user
-                     Reservation.paginate(page:, per_page:).includes(:items)
+                     Reservation.includes(:items)
+                   elsif query.present?
+                     Reservation.search(query)
                    else
-                     current_user.reservations.paginate(page:, per_page:).includes(:items)
+                     current_user.reservations.includes(:items)
                    end
 
-    reservation_attributes = serialize_reservations(reservations)
+    paginated_reservations = reservations.paginate(page:, per_page:)
+    reservation_attributes = serialize_reservations(paginated_reservations)
 
-    render json: {
-      status: { code: 200, message: 'Reservations retrieved successfully.' },
-      data: reservation_attributes,
-      meta: {
-        total_pages: reservations.total_pages,
-        current_page: reservations.current_page,
-        per_page: reservations.per_page,
-        total_count: reservations.total_entries
-      }
-    }, status: :ok
+    render_response('Reservations', reservation_attributes, paginated_reservations)
   end
 
-  # GET /api/v1/p/search_items
-  def search_items
+  def users
     per_page = params[:per_page] || 10
     page = params[:page] || 1
     query = params[:query]
 
-    @items = Item.search(query).paginate(page:, per_page:)
-    items_attributes = serialize_items(@items)
+    users = if query.present?
+              User.search(query)
+            else
+              User.all
+            end
 
-    render json: {
-      status: { code: 200, message: 'Items retrieved successfully.' },
-      data: items_attributes,
-      meta: {
-        total_pages: @items.total_pages,
-        current_page: @items.current_page,
-        per_page: @items.per_page,
-        total_count: @items.total_entries
-      }
-    }, status: :ok
+    paginated_users = users.paginate(page:, per_page:)
+    user_attributes = serialize_users(paginated_users)
+
+    render_response('Users', user_attributes, paginated_users)
   end
 
-  # GET /api/v1/p/search_reservations
-  def search_reservations
+  def search
+    query = params[:query]
     per_page = params[:per_page] || 10
     page = params[:page] || 1
-    query = params[:query]
 
-    @reservations = Reservation.search(query).paginate(page:, per_page:)
-    reservation_attributes = serialize_reservations(@reservations)
+    items = Item.search(query).paginate(page:, per_page:)
 
-    render json: {
-      status: { code: 200, message: 'Reservations retrieved successfully.' },
-      data: reservation_attributes,
-      meta: {
-        total_pages: @reservations.total_pages,
-        current_page: @reservations.current_page,
-        per_page: @reservations.per_page,
-        total_count: @reservations.total_entries
-      }
-    }, status: :ok
-  end
+    reservations = Reservation.search(query).paginate(page:, per_page:)
 
-  # GET /api/v1/reservations/search_users
-  def search_users
-    per_page = params[:per_page] || 10
-    page = params[:page] || 1
-    query = params[:query]
+    users = User.search(query).paginate(page:, per_page:)
 
-    @users = User.search(query).paginate(page:, per_page:)
-    user_attributes = serialize_users(@users)
+    all_results = items + reservations + users
 
-    render json: {
-      status: { code: 200, message: 'Users retrieved successfully.' },
-      data: user_attributes,
-      meta: {
-        total_pages: @users.total_pages,
-        current_page: @users.current_page,
-        per_page: @users.per_page,
-        total_count: @users.total_entries
-      }
-    }, status: :ok
+    serialize_results(all_results)
+
+    paginated_reservations = reservations.paginate(page:, per_page:)
+    attributes = serialize_results(all_results)
+    render_response('Search result', attributes, paginated_reservations)
   end
 
   private
 
-  def username
-    current_user&.username || '__guest__'
-  end
-
   def serialize_items(items, admin_user)
-    if admin_user
-      items.map { |item| AdminItemSerializer.new(item).serializable_hash[:data][:attributes] }
-    else
-      items.map { |item| ItemSerializer.new(item).serializable_hash[:data][:attributes] }
-    end
+    serializer = admin_user ? AdminItemSerializer : ItemSerializer
+    items.map { |item| serializer.new(item).serializable_hash[:data][:attributes] }
   end
 
   def serialize_reservations(reservations)
     reservations.map { |reservation| ReservationSerializer.new(reservation).serializable_hash[:data][:attributes] }
   end
 
-  def authorize_user(user)
-    current_user.admin? || current_user == user
+  def serialize_users(users)
+    users.map { |user| UserSerializer.new(user).serializable_hash[:data][:attributes] }
+  end
+
+  def render_response(message, data, paginated_data)
+    render json: {
+      status: { code: 200, message: "#{message} retrieved successfully." },
+      data:,
+      meta: {
+        total_pages: paginated_data.total_pages,
+        current_page: paginated_data.current_page,
+        per_page: paginated_data.per_page,
+        total_count: paginated_data.total_entries
+      }
+    }, status: :ok
+  end
+
+  def serialize_results(results)
+    results.map do |result|
+      serializer_class = case result
+                         when Item
+                           ItemSerializer
+                         when Reservation
+                           ReservationSerializer
+                         when User
+                           UserSerializer
+                         end
+      serializer_class.new(result).serializable_hash[:data] if serializer_class
+    end.compact
   end
 end
