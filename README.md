@@ -13,16 +13,14 @@
     - [Usage](#usage)
       - [Auth Sign up](#auth-sign-up)
       - [Auth Login](#auth-login)
-      - [Get Items](#get-items)
-      - [GET ```http:///api/v1/:username/reservations```](#get-httpapiv1usernamereservations)
-      - [GET ```http:///api/v1/:username/items```](#get-httpapiv1usernameitems)
-      - [POST ```http:///api/v1/:username/make_admin```](#post-httpapiv1usernamemake_admin)
-      - [POST ```http:///api/v1/:username/remove_admin```](#post-httpapiv1usernameremove_admin)
-    - [GET ```http://localhost:4000/api/v1/p/items```](#get-httplocalhost4000apiv1pitems)
-  - [Response Structure](#response-structure)
-      - [Data](#data)
-      - [Meta](#meta)
-      - [Client Customization](#client-customization)
+      - [Retrieve reservations that is associated with a user](#retrieve-reservations-that-is-associated-with-a-user)
+      - [Retrieve items that is associated with a user](#retrieve-items-that-is-associated-with-a-user)
+      - [Make user an Admin](#make-user-an-admin)
+      - [Remove user from Admin](#remove-user-from-admin)
+      - [Retrieve all Items](#retrieve-all-items)
+        - [Data](#data)
+        - [Meta](#meta)
+        - [Client Customization](#client-customization)
     - [Deployment](#deployment)
   - [👥 Authors ](#-authors-)
   - [🔭 Future Features ](#-future-features-)
@@ -230,73 +228,33 @@ makeRequest();
 - Header (object)
   - authorization (string): Use to handle user authentication
 ---
-
-#### Get Items
-GET ```http:///api/v1/p/items```
-This endpoint makes an HTTP GET request to retrieve a list of items.
-- Request body
-  - The request does not contain a request body.
-
-- Response
-  - Status: 200
-  - Body: 
-```JSON
-    {
-  "status": {
-    "code": 0,
-    "message": "",
-    "user": ""
-  },
-  "data": [
-    {
-      "id": 0,
-      "name": "",
-      "image": null,
-      "description": "",
-      "city": "",
-      "created_at": "",
-      "updated_at": "",
-      "reserving_ids": "",
-      "reserving_usernames": ""
-    }
-  ],
-  "meta": {
-    "total_pages": 0,
-    "current_page": 0,
-    "per_page": 0,
-    "total_count": 0
-  }
-}
-```
-
-This endpoint retrieves a list of items with their details.
-
----
-
-#### GET ```http:///api/v1/:username/reservations```
+#### Retrieve reservations that is associated with a user
+GET ```http:///api/v1/:username/reservations```
 
 - This endpoint makes an HTTP GET request to retrieve a list of reservations associated with a user by `:username`. The request does not contain a request body.
 The response to the request has a status code of 200, indicating a successful execution. The response body contains an array of reservation data, including reservation IDs, types, attributes, and item lists associated with each reservation.
 
 ---
-#### GET ```http:///api/v1/:username/items```
+#### Retrieve items that is associated with a user
+GET ```http:///api/v1/:username/items```
 
 ---
-
-#### POST ```http:///api/v1/:username/make_admin```
+#### Make user an Admin
+POST ```http:///api/v1/:username/make_admin```
 
 - Make user an Admin. Admin has priviledge to manage items. 
 
 ---
-
-#### POST ```http:///api/v1/:username/remove_admin```
-- Remove user from Admin
+#### Remove user from Admin
+POST ```http:///api/v1/:username/remove_admin```
 
 ---
 
-### GET ```http://localhost:4000/api/v1/p/items```
+#### Retrieve all Items
 
-## Response Structure
+GET ```http://localhost:4000/api/v1/p/items```
+
+- Response Structure
 
 The API response follows a standardized format:
 
@@ -318,7 +276,7 @@ The API response follows a standardized format:
   }
 }
 ```
-#### Data
+##### Data
 The data array contains individual item objects, each with the following properties:
 
 - id: Unique identifier for the item.
@@ -332,7 +290,7 @@ The data array contains individual item objects, each with the following propert
 - reserving_usernames: Comma-separated list of usernames associated with the reservations.
 
 
-#### Meta
+##### Meta
 The meta object provides additional metadata about the paginated results:
 
 - total_pages: Total number of pages (e.g., 1).
@@ -340,7 +298,7 @@ The meta object provides additional metadata about the paginated results:
 - per_page: Number of items per page (e.g., 10).
 - total_count: Total number of items across all pages (e.g., 6).
 
-#### Client Customization
+##### Client Customization
 Clients can customize their requests using the following query parameters:
 
 - per_page (Items Per Page): Specify the number of items per page.
