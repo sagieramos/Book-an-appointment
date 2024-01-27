@@ -20,6 +20,11 @@ ActiveRecord::Schema[7.1].define(version: 2024_01_22_111623) do
     t.binary "image"
     t.text "description"
     t.string "city"
+    t.decimal "finance_fee", precision: 10, scale: 2
+    t.decimal "option_to_purchase_fee", precision: 10, scale: 2
+    t.decimal "total_amount_payable", precision: 10, scale: 2
+    t.integer "duration"
+    t.decimal "apr_representative", precision: 5, scale: 2
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["admin_id"], name: "index_items_on_admin_id"

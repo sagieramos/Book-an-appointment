@@ -1,11 +1,11 @@
 user = User.new(
-  email: ENV['SUPER_ADMIN_EMAIL'],
-  username: ENV['SUPER_ADMIN_USERNAME'],
+  email:  's@g.c', #ENV['SUPER_ADMIN_EMAIL'],
+  username: 's_admin', #ENV['SUPER_ADMIN_USERNAME'],
   super_admin: true,
-  first_name: ENV['SUPER_ADMIN_FIRST_NAME'],
-  last_name: ENV['SUPER_ADMIN_LAST_NAME']
+  first_name: 'Stanley', #ENV['SUPER_ADMIN_FIRST_NAME'],
+  last_name: 'Osagie' #ENV['SUPER_ADMIN_LAST_NAME']
 )
 
-user.password = ENV['SUPER_ADMIN_PASSWORD']
-user.password_confirmation = ENV['SUPER_ADMIN_PASSWORD']
+user.password = '123456' #ENV['SUPER_ADMIN_PASSWORD']
+user.password_confirmation = '123456' #ENV['SUPER_ADMIN_PASSWORD']
 user.save

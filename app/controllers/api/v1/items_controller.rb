@@ -145,7 +145,12 @@ class Api::V1::ItemsController < ApplicationController
   end
 
   def item_params
-    params.require(:item).permit(:name, :description, :image, :city, reservation_id: [])
+    params.require(:item).permit(
+      :name, :description, :image,
+      :city, :finance_fee, :option_to_purchase_fee,
+      :total_amount_payable,
+      :duration, :apr_representative, reservation_id: []
+    )
   end
 
   def serialize_items(items)
