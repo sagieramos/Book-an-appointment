@@ -22,14 +22,10 @@ Rails.application.routes.draw do
         end
   
         resources :reservations, only: [:index, :show, :create, :update, :destroy] do
-          resources :items, only: [:index, :show]
-          member do
-            post :add_item
-            post :remove_item
-            get :items
-          end
           collection do
             get :date
+            get :add_item
+            get :remove_item
           end
         end
   
@@ -71,6 +67,4 @@ as :user do
   put 'auth/password/reset', to: 'api/v1/users/passwords#update', as: :update_user_password
   post 'auth/password/forgot', to: 'api/v1/users/passwords#create', as: :forgot_user_password
 end
-
-
 end

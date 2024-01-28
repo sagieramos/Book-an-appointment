@@ -106,28 +106,6 @@ class Api::V1::ItemsController < ApplicationController
     }, status: :ok
   end
 
-  # POST /api/v1/items/:id/add_reservation
-  def add_reservation
-    reservation_id = params[:reservation_id].to_i
-    @item.reservations << Reservation.find(reservation_id) unless @item.reservations.include?(reservation_id)
-
-    render json: {
-      status: { code: 200, message: 'Reservation added to item successfully.' },
-      data: ItemSerializer.new(@item).serializable_hash[:data][:attributes]
-    }, status: :ok
-  end
-
-  # POST /api/v1/items/:id/remove_reservation
-  def remove_reservation
-    reservation_id = params[:reservation_id].to_i
-    @item.reservations.delete(Reservation.find(reservation_id))
-
-    render json: {
-      status: { code: 200, message: 'Reservation removed from item successfully.' },
-      data: ItemSerializer.new(@item).serializable_hash[:data][:attributes]
-    }, status: :ok
-  end
-
   private
 
   def set_user

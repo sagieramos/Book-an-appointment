@@ -11,13 +11,7 @@ class Api::V1::PagesController < ApplicationController
     private_user = params[:private_user] || false
     query = params[:query]
 
-    items = if private_user && query.present?
-              current_user.items.search(query)
-            elsif private_user
-              current_user.items
-            else
-              Item.all
-            end
+    items = fetch_items(private_user, query)
 
     paginated_items = items.paginate(page:, per_page:)
     items_attributes = serialize_items(paginated_items, current_user&.admin?)
@@ -90,7 +84,7 @@ class Api::V1::PagesController < ApplicationController
       additional_attributes = {}
       additional_attributes[:reservation_count] = item.reservations.count if admin_user
       if current_user
-        additional_attributes[:your_reservation] =
+        additional_attributes[:you_reserve] =
           item.reservations.where(customer_id: current_user.id).count
       end
       attributes = serializer.new(item).serializable_hash[:data][:attributes]
@@ -131,5 +125,15 @@ class Api::V1::PagesController < ApplicationController
                          end
       serializer_class.new(result).serializable_hash[:data] if serializer_class
     end.compact
+  end
+
+  def fetch_items(private_user, query)
+    if private_user && query.present?
+      current_user.items.search(query)
+    elsif private_user
+      current_user.items
+    else
+      Item.all
+    end
   end
 end

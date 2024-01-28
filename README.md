@@ -350,7 +350,7 @@ Example:
     "reservation_items_attributes": [
       { "item_id": 3 },
       { "item_id": 4 },
-      { "id": 5, "_destroy": "1" }
+      { "id": 5, "_destroy": true }
     ]
   }
 }

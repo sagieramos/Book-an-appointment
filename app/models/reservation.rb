@@ -45,18 +45,28 @@ class Reservation < ApplicationRecord
     items_attributes.each do |item_params|
       item_id = item_params[:item_id]
       item_id = item_params[:id] if item_params[:id].present? # For existing items
-      if item_params[:_destroy] == '1' # Marked for deletion
-        reservation_items.find_by(item_id:)&.destroy
-      elsif item_id.present? && !item_ids.include?(item_id) && !item_already_reserved?(item_id) # New item
-        reservation_items.create(item_id:)
+
+      if item_params[:_destroy] == true # Marked for deletion
+        destroy_reservation_item(item_id)
+      elsif valid_new_item?(item_id)
+        create_reservation_item(item_id)
       end
     end
   end
 
   private
 
-  def item_already_reserved?(item_id)
-    items.exists?(item_id)
+  def destroy_reservation_item(item_id)
+    reservation_item = reservation_items.find_by(item_id:)
+    reservation_item&.destroy
+  end
+
+  def valid_new_item?(item_id)
+    item_id.present? && !item_ids.include?(item_id) && !items.exists?(item_id)
+  end
+
+  def create_reservation_item(item_id)
+    reservation_items.create(item_id:)
   end
 
   def reserve_for_use_date_in_future
