@@ -10,7 +10,7 @@ class ReservationSerializer
     items_attributes = paginated_items.map { |item| ItemSerializer.new(item).serializable_hash[:data][:attributes] }
 
     options = paginated_items.total_entries > PER_PAGE
-    items_attributes << { show_reservation: "/api/v1/reservations/#{object.id}" } if options
+    items_attributes << { more: true } if options
 
     items_attributes
   end
