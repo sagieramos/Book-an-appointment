@@ -29,7 +29,7 @@ class Api::V1::ReservationsController < ApplicationController
     page = params[:page] || 1
     per_page = params[:per_page] || 10
 
-    items = @reservation.items.paginate(page:, per_page:)
+    items = @reservation.items.order(created_at: :desc).paginate(page:, per_page:)
     serialized_items = items.map { |item| ItemSerializer.new(item).serializable_hash[:data][:attributes] }
 
     render json: {
@@ -49,35 +49,28 @@ class Api::V1::ReservationsController < ApplicationController
 
   # POST /api/v1/reservations
   def create
-    @reservation = current_user.reservations.build(reservation_params)
+    user = current_user
+    reservation_params = params.require(:reservation).permit(:reserve_for_use_date,
+                                                             reservation_items_attributes: %i[id item_id])
 
-    if @reservation.save
-      render json: {
-        status: { code: 201, message: 'Reservation created successfully.' },
-        data: ReservationSerializer.new(@reservation).serializable_hash[:data][:attributes]
-      }, status: :created
+    @reservation = Reservation.create_or_update_reservation(user, reservation_params)
+
+    if @reservation.persisted?
+      render json: { status: 'Success', reservation: @reservation }, status: :ok
     else
-      render json: {
-        status: 422,
-        message: 'Validation failed.',
-        errors: @reservation.errors.full_messages
-      }, status: :unprocessable_entity
+      render json: { status: 'Error', errors: @reservation.errors.full_messages }, status: :unprocessable_entity
     end
   end
 
   # PATCH/PUT /api/v1/reservations/:id
   def update
-    if @reservation.update(reservation_params)
-      render json: {
-        status: { code: 200, message: 'Reservation updated successfully.' },
-        data: ReservationSerializer.new(@reservation).serializable_hash[:data][:attributes]
-      }, status: :ok
+    @reservation = Reservation.find(params[:id])
+
+    if @reservation.update_with_items(reservation_params)
+      render json: { status: { code: 200, message: 'Reservation updated successfully.' } }, status: :ok
     else
-      render json: {
-        status: 422,
-        message: 'Validation failed.',
-        errors: @reservation.errors.full_messages
-      }, status: :unprocessable_entity
+      render json: { status: 422, message: 'Failed to update reservation.', errors: @reservation.errors.full_messages },
+             status: :unprocessable_entity
     end
   end
 
@@ -108,13 +101,46 @@ class Api::V1::ReservationsController < ApplicationController
 
   # POST /api/v1/reservations/:id/add_item
   def add_item
-    item_id = params[:item_id].to_i
-    @reservation.items << Item.find(item_id) unless @reservation.items.include?(item_id)
+    item = Item.find(params[:item_id])
 
-    render json: {
-      status: { code: 200, message: 'Item added to reservation successfully.' },
-      data: ReservationSerializer.new(@reservation).serializable_hash[:data][:attributes]
-    }, status: :ok
+    if @reservation.items << item
+      render json: { status: { code: 200, message: 'Item added to reservation successfully.' } }, status: :ok
+    else
+      render json: { status: 422, message: 'Failed to add item to reservation.', errors: @reservation.errors.full_messages },
+             status: :unprocessable_entity
+    end
+  end
+
+  # POST /api/v1/reservations/:id/remove_item
+  def remove_item
+    item = Item.find(params[:item_id])
+
+    if @reservation.items.delete(item)
+      render json: { status: { code: 200, message: 'Item removed from reservation successfully.' } }, status: :ok
+    else
+      render json: { status: 422, message: 'Failed to remove item from reservation.', errors: @reservation.errors.full_messages },
+             status: :unprocessable_entity
+    end
+  end
+
+  # POST /api/v1/reservations/:id/add_item
+  def add_item
+    item_id = params[:item_id].to_i
+    item = Item.find(item_id)
+
+    if @reservation.items.include?(item)
+      render json: {
+        status: 422,
+        message: 'Item is already associated with the reservation.'
+      }, status: :unprocessable_entity
+    else
+      @reservation.items << item
+
+      render json: {
+        status: { code: 200, message: 'Item added to reservation successfully.' },
+        data: ReservationSerializer.new(@reservation).serializable_hash[:data][:attributes]
+      }, status: :ok
+    end
   end
 
   # POST /api/v1/reservations/:id/remove_item
@@ -125,6 +151,17 @@ class Api::V1::ReservationsController < ApplicationController
     render json: {
       status: { code: 200, message: 'Item removed from reservation successfully.' },
       data: ReservationSerializer.new(@reservation).serializable_hash[:data][:attributes]
+    }, status: :ok
+  end
+
+  # GET /api/v1/reservationsdate
+  def date
+    @reservationsdate = Reservation.sort_by_date
+    render json: {
+      status: { code: 200, message: 'Reservationsdate retrieved successfully.' },
+      data: @reservationsdate.map do |reservationsdate|
+              ReservationsdateSerializer.new(reservationsdate).serializable_hash[:data][:attributes]
+            end
     }, status: :ok
   end
 
@@ -149,6 +186,6 @@ class Api::V1::ReservationsController < ApplicationController
   end
 
   def reservation_params
-    params.require(:reservation).permit(:reserve_for_use_date, :city, item_ids: [])
+    params.require(:reservation).permit(:reserve_for_use_date, reservation_items_attributes: %i[id item_id _destroy])
   end
 end

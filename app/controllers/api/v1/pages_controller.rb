@@ -11,10 +11,10 @@ class Api::V1::PagesController < ApplicationController
     private_user = params[:private_user] || false
     query = params[:query]
 
-    items = if private_user
+    items = if private_user && query.present?
+              current_user.items.search(query)
+            elsif private_user
               current_user.items
-            elsif query.present?
-              Item.search(query)
             else
               Item.all
             end
@@ -86,7 +86,16 @@ class Api::V1::PagesController < ApplicationController
 
   def serialize_items(items, admin_user)
     serializer = admin_user ? AdminItemSerializer : ItemSerializer
-    items.map { |item| serializer.new(item).serializable_hash[:data][:attributes] }
+    items.map do |item|
+      additional_attributes = {}
+      additional_attributes[:reservation_count] = item.reservations.count if admin_user
+      if current_user
+        additional_attributes[:your_reservation] =
+          item.reservations.where(customer_id: current_user.id).count
+      end
+      attributes = serializer.new(item).serializable_hash[:data][:attributes]
+      attributes.merge(additional_attributes)
+    end
   end
 
   def serialize_reservations(reservations)

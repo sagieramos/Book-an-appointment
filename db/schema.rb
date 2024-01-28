@@ -42,10 +42,10 @@ ActiveRecord::Schema[7.1].define(version: 2024_01_22_111623) do
   create_table "reservations", force: :cascade do |t|
     t.bigint "customer_id", null: false
     t.date "reserve_for_use_date"
-    t.string "city"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["customer_id"], name: "index_reservations_on_customer_id"
+    t.index ["reserve_for_use_date"], name: "index_reservations_on_reserve_for_use_date"
   end
 
   create_table "users", force: :cascade do |t|

@@ -28,6 +28,9 @@ Rails.application.routes.draw do
             post :remove_item
             get :items
           end
+          collection do
+            get :date
+          end
         end
   
         resources :items, only: [:index, :show, :create, :destroy] do

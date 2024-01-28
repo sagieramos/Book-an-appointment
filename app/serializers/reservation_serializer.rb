@@ -3,10 +3,7 @@ PER_PAGE = 2
 
 class ReservationSerializer
   include JSONAPI::Serializer
-  attributes :id, :customer_id, :reserve_for_use_date, :city, :created_at, :updated_at
-
-  # belongs_to :customer, serializer: UserSerializer
-  # has_many :items, serializer: ItemSerializer
+  attributes :id, :customer_id, :reserve_for_use_date, :created_at, :updated_at
 
   attribute :item_list do |object|
     paginated_items = object.paginated_item_list(PAGE, PER_PAGE)

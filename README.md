@@ -21,6 +21,8 @@
         - [Data](#data)
         - [Meta](#meta)
         - [Client Customization](#client-customization)
+    - [Request type: POST](#request-type-post)
+      - [Request type: PATCH](#request-type-patch)
     - [Deployment](#deployment)
   - [👥 Authors ](#-authors-)
   - [🔭 Future Features ](#-future-features-)
@@ -310,6 +312,51 @@ Example: GET ```/api/items?page=2&per_page=10```
 Feel free to customize these parameters to suit your application's requirements.
 
 Feel free to customize these parameters to suit your application's requirements.
+
+---
+
+### Request type: POST
+- url: /s_admin/reservations
+
+example:
+
+```JSON
+{
+  "reservation": {
+    "reserve_for_use_date": "2024-01-27",
+    "reservation_items_attributes": [
+      { "item_id": 1 },
+      { "item_id": 2 }
+    ]
+  }
+}
+
+```
+
+---
+
+#### Request type: PATCH
+- URL: /:username/reservations/:id (replace 1 with the ID of the reservation you want to edit)
+- Headers:
+  - Content-Type: application/json
+- Body (raw JSON):
+- json
+Example:
+
+``` JSON
+{
+  "reservation": {
+    "reserve_for_use_date": "2024-02-10",
+    "reservation_items_attributes": [
+      { "item_id": 3 },
+      { "item_id": 4 },
+      { "id": 5, "_destroy": "1" }
+    ]
+  }
+}
+```
+
+In this example, we're updating the reservation with ID 1, changing the reserve_for_use_date, and modifying the associated items by adding items with IDs 3 and 4 while removing the item with ID 5.
 
 ### Deployment
 
