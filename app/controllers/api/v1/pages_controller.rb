@@ -136,13 +136,19 @@ class Api::V1::PagesController < ApplicationController
     end.compact
   end
 
-  def fetch_items(private_user, query)
-    if private_user && query.present?
-      current_user.items.search(query)
-    elsif private_user
+  def fetch_private_items(private_user)
+    if private_user
       current_user.items
     else
       Item.all
+    end
+  end
+
+  def fetch_items(private_user, query)
+    if query.present?
+      Item.search(query)
+    else
+      fetch_private_items(private_user)
     end
   end
 end
