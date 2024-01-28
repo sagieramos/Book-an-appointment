@@ -10,17 +10,29 @@ class Api::V1::ReservationsController < ApplicationController
   # GET /api/v1/:username/reservations
   def index
     query = params[:query]
-    @reservations = if query.present?
-                      @user.reservations.search(query).includes(:items)
-                    else
-                      @user.reservations.includes(:items)
-                    end
+    reservations = if query.present?
+                     @user.reservations.search(query).includes(:items)
+                   else
+                     @user.reservations.includes(:items)
+                   end
+
+    page = params[:page] || 1
+    per_page = params[:per_page] || 10
+    paginated_reservations = reservations.paginate(page:, per_page:)
+
+    serialized_reservations = paginated_reservations.map do |reservation|
+      ReservationSerializer.new(reservation).serializable_hash[:data][:attributes]
+    end
 
     render json: {
       status: { code: 200, message: 'Reservations retrieved successfully.' },
-      data: @reservations.map do |reservation|
-              ReservationSerializer.new(reservation).serializable_hash[:data][:attributes]
-            end
+      data: serialized_reservations,
+      meta: {
+        total_pages: paginated_reservations.total_pages,
+        current_page: paginated_reservations.current_page,
+        total_items: paginated_reservations.total_entries,
+        per_page: paginated_reservations.per_page
+      }
     }, status: :ok
   end
 
