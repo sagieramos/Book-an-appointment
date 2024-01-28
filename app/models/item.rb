@@ -3,6 +3,8 @@ class Item < ApplicationRecord
   has_many :reservation_items, dependent: :destroy
   has_many :reservations, through: :reservation_items
 
+  mount_uploader :image, ImageUploader
+
   accepts_nested_attributes_for :reservation_items
 
   validates :name, presence: true

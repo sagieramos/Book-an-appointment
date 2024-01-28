@@ -19,6 +19,15 @@ class Api::V1::PagesController < ApplicationController
     render_response('Pages Items', items_attributes, paginated_items)
   end
 
+  def show_item
+    @item = Item.find(params[:id])
+
+    render json: {
+      status: { code: 200, message: 'Item retrieved successfully.' },
+      data: ItemSerializer.new(@item).serializable_hash[:data][:attributes]
+    }, status: :ok
+  end
+
   def reservations
     per_page = params[:per_page] || 10
     page = params[:page] || 1

@@ -6,6 +6,7 @@ Rails.application.routes.draw do
           get :reservations
           get :items
           get :search
+          get 'items/:id', to: 'pages#show_item', as: 'show_item'
         end
       end
   
