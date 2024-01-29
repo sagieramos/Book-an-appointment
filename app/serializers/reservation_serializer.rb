@@ -9,8 +9,8 @@ class ReservationSerializer
     paginated_items = object.paginated_item_list(PAGE, PER_PAGE)
     items_attributes = paginated_items.map { |item| ItemSerializer.new(item).serializable_hash[:data][:attributes] }
 
-    options = paginated_items.total_entries > PER_PAGE
-    items_attributes << { more: true } if options
+    # options = paginated_items.total_entries > PER_PAGE
+    # items_attributes << { more: true } if options
 
     items_attributes
   end

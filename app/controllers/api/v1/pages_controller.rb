@@ -49,9 +49,9 @@ class Api::V1::PagesController < ApplicationController
   end
 
   def users
-    per_page = params[:per_page] || 10
+    per_page = params[:per_page] || 12
     page = params[:page] || 1
-    query = params[:query]
+    query = params[:query] || ''
 
     users = if query.present?
               User.search(query)
