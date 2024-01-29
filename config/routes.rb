@@ -7,6 +7,7 @@ Rails.application.routes.draw do
           get :items
           get :search
           get 'items/:id', to: 'pages#show_item', as: 'show_item'
+          delete 'items/:id', to: 'pages#destroy_item', as: 'destroy_item'
         end
       end
   

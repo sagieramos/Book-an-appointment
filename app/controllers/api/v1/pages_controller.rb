@@ -28,6 +28,24 @@ class Api::V1::PagesController < ApplicationController
     }, status: :ok
   end
 
+  def destroy_item
+    if current_user&.admin?
+      item = Item.find_by(id: params[:id])
+      if item.nil?
+        render json: { error: 'Item not found' }, status: :not_found
+      else
+        item.destroy
+
+        render json: {
+          status: { code: 200, message: 'Item deleted successfully.' },
+          data: ItemSerializer.new(item).serializable_hash[:data][:attributes]
+        }, status: :ok
+      end
+    else
+      render json: { error: 'Unauthorized' }, status: :unauthorized
+    end
+  end
+
   def reservations
     per_page = params[:per_page] || 10
     page = params[:page] || 1
