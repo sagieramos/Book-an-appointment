@@ -11,7 +11,7 @@ class Api::V1::PagesController < ApplicationController
     private_user = params[:private_user] || false
     query = params[:query]
 
-    items = fetch_items(private_user, query)
+    items = fetch_items(private_user, query).order(created_at: :desc)
 
     paginated_items = items.paginate(page:, per_page:)
     items_attributes = serialize_items(paginated_items, current_user&.admin?)
@@ -42,7 +42,7 @@ class Api::V1::PagesController < ApplicationController
                      current_user.reservations.includes(:items)
                    end
 
-    paginated_reservations = reservations.paginate(page:, per_page:)
+    paginated_reservations = reservations.order(created_at: :desc).paginate(page:, per_page:)
     reservation_attributes = serialize_reservations(paginated_reservations)
 
     render_response('Reservations', reservation_attributes, paginated_reservations)
@@ -70,7 +70,7 @@ class Api::V1::PagesController < ApplicationController
     per_page = params[:per_page] || 10
     page = params[:page] || 1
 
-    items = Item.search(query).paginate(page:, per_page:)
+    items = Item.search(query).order(created_at: :desc).paginate(page:, per_page:)
 
     reservations = Reservation.search(query).paginate(page:, per_page:)
 
