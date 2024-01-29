@@ -1,0 +1,5 @@
+# This is to generate random secrete key in rails console
+require 'securerandom'
+
+puts SecureRandom.hex(64)
+
