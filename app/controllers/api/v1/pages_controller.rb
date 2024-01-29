@@ -21,10 +21,11 @@ class Api::V1::PagesController < ApplicationController
 
   def show_item
     @item = Item.find(params[:id])
+    items_attributes = serialize_items([@item], current_user&.admin?)
 
     render json: {
       status: { code: 200, message: 'Item retrieved successfully.' },
-      data: ItemSerializer.new(@item).serializable_hash[:data][:attributes]
+      data: items_attributes[0]
     }, status: :ok
   end
 
