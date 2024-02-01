@@ -4,17 +4,6 @@ class Api::V1::Users::RegistrationsController < Devise::RegistrationsController
 
   respond_to :json
 
-  # def create
-  # build_resource(sign_up_params)
-
-  # if resource.save
-  # render json: resource.as_json(except: %i[id created_at updated_at]), status: :created
-  # else
-  # clean_up_passwords resource
-  #  render json: { errors: resource.errors.full_messages }, status: :unprocessable_entity
-  # end
-  # end
-
   protected
 
   def configure_sign_up_params
@@ -44,19 +33,4 @@ class Api::V1::Users::RegistrationsController < Devise::RegistrationsController
       }, status: :unprocessable_entity
     end
   end
-
-  # def sign_up(resource_name, resource)
-  # Your custom sign-up logic here, if needed
-  # super
-  # end
-
-  # def after_sign_up_path_for(resource)
-  # Your custom logic for the path after sign-up
-  # super(resource)
-  # end
-
-  # def after_inactive_sign_up_path_for(resource)
-  # Your custom logic for the path after inactive sign-up
-  #  super(resource)
-  # end
 end

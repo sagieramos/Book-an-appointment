@@ -44,9 +44,4 @@ class Api::V1::Users::SessionsController < Devise::SessionsController
       }, status: :unauthorized
     end
   end
-
-  # If you have extra params to permit, append them to the sanitizer.
-  # def configure_sign_in_params
-  #   devise_parameter_sanitizer.permit(:sign_in, keys: [:username, :email, :password])
-  # end
 end
