@@ -8,6 +8,11 @@ gem 'rails', '~> 7.1.2'
 # Use postgresql as the database for Active Record
 gem 'pg', '~> 1.1'
 
+# display Swagger UI
+gem 'rswag-ui'
+# make API requests from Swagger UI
+gem 'rswag-api'
+
 # Use the Puma web server [https://github.com/puma/puma]
 gem 'puma', '>= 5.0'
 

@@ -1,0 +1,134 @@
+openapi: 3.0.3
+info:
+  title: Book an Appointment
+  version: v1
+  servers:
+  - url: http://localhost:4000
+paths:
+  /api-docs:
+    get:
+      summary: Swagger UI for API documentation
+      tags:
+        - API Docs
+      responses:
+        '200':
+          description: Success - Swagger UI displayed
+
+  /api/v1/p/reservations:
+    get:
+      summary: List reservations
+      tags:
+        - Reservations
+      responses:
+        '200':
+          description: Success - Reservations listed
+
+    post:
+      summary: Create a reservation
+      tags:
+        - Reservations
+      responses:
+        '201':
+          description: Success - Reservation created
+
+  /api/v1/p/items:
+    get:
+      summary: List items
+      tags:
+        - Items
+      responses:
+        '200':
+          description: Success - Items listed
+
+    post:
+      summary: Create an item
+      tags:
+        - Items
+      responses:
+        '201':
+          description: Success - Item created
+
+  /api/v1/p/search:
+    get:
+      summary: Perform a search
+      tags:
+        - Search
+      responses:
+        '200':
+          description: Success - Search results
+
+  /api/v1/p/items/{id}:
+    get:
+      summary: Get item details
+      tags:
+        - Items
+      responses:
+        '200':
+          description: Success - Item details retrieved
+
+    delete:
+      summary: Delete item
+      tags:
+        - Items
+      responses:
+        '204':
+          description: Success - Item deleted
+
+  /api/v1/users/my_profile:
+    get:
+      summary: Get user profile
+      tags:
+        - Users
+      responses:
+        '200':
+          description: Success - User profile retrieved
+
+  /api/v1/users:
+    get:
+      summary: List users
+      tags:
+        - Users
+      responses:
+        '200':
+          description: Success - Users listed
+
+    post:
+      summary: Create a user
+      tags:
+        - Users
+      responses:
+        '201':
+          description: Success - User created
+
+  /api/v1/:username:
+    get:
+      summary: Get user details
+      tags:
+        - Users
+      responses:
+        '200':
+          description: Success - User details retrieved
+
+    patch:
+      summary: Update user details
+      tags:
+        - Users
+      responses:
+        '200':
+          description: Success - User details updated
+
+    put:
+      summary: Update user details
+      tags:
+        - Users
+      responses:
+        '200':
+          description: Success - User details updated
+
+    delete:
+      summary: Delete user
+      tags:
+        - Users
+      responses:
+        '204':
+          description: Success - User deleted
