@@ -4,6 +4,6 @@ class ItemSerializer
              :total_amount_payable, :duration, :apr_representative, :created_at, :updated_at, :image_url
 
   attribute :image_url do |object|
-    object.image.url if object.image.present?
+    object.image.url
   end
 end
