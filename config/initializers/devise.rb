@@ -270,7 +270,7 @@ Devise.setup do |config|
   config.sign_out_via = :delete
   
   config.jwt do |jwt|
-    jwt.secret = ENV['SECRET_KEY']
+    jwt.secret = 31c9afb1fcdc1c0b598c09ea9ef4cf625014278ba22bca051693646af1e5a238302a6cca3e2f7ff0376b53b51cf267e7b6dcbc38d5e79faebf98975acbc9fd1c #ENV['SECRET_KEY']
     jwt.dispatch_requests = [['POST', %r{^/auth/login$}]]
     jwt.revocation_requests = [['DELETE', %r{^/auth/logout$}]]
     jwt.expiration_time = 1.day.to_i
