@@ -9,7 +9,7 @@ bundle install
 # RAILS_ENV=production bin/rails assets:precompile
 # ./bin/rails assets:clean
 
-rails db:migrate
+rails db:migrate RAILS_ENV=production
 
 rails db:seed
 
