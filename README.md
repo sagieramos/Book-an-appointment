@@ -389,7 +389,7 @@ In this example, we're updating the reservation with ID 1, changing the reserve_
 👤 **Lawmsangi Varte**
 
 - GitHub: [@githubhandle](https://github.com/Lawmsangi)
-- Twitter: [@twitterhandle](https://twitter.com/mamy_22_zayn)
+- YouTube: [@youtubehandle](https://www.youtube.com/channel/UCnV00wwMfHR3gRnHORnDRXw)
 - LinkedIn: [LinkedIn](https://www.linkedin.com/in/lawmsangi-varte-baa429244/)
 
 
