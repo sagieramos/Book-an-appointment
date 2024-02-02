@@ -6,11 +6,11 @@
 set -o errexit
 
 bundle install
-RAILS_ENV=production bin/rails assets:precompile
-./bin/rails assets:clean
+# RAILS_ENV=production bin/rails assets:precompile
+# ./bin/rails assets:clean
 
-./bin/rails db:migrate
+rails db:migrate
 
 rails db:seed
 
-# rails server -e production
+rails server -e production
