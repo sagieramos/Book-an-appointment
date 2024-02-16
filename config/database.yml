@@ -79,7 +79,9 @@ test:
 #
 production:
   <<: *default
-  database: book_an_appointment_production
-  username: book_an_appointment
-  password: <%= ENV["BOOK_AN_APPOINTMENT_DATABASE_PASSWORD"] %>
+  url: <%= ENV["DB_URL"] %>
+  database: <%= ENV["DB_NAME"] %>
+  username: <%= ENV["DB_USER"] %>
+  password: <%= ENV["DB_PASS"] %>
   host: <%= ENV["DB_HOST"] %>
+  port: 5432

@@ -373,6 +373,25 @@ In this example, we're updating the reservation with ID 1, changing the reserve_
 - GitHub: [@sagieramos](https://github.com/sagieramos)
 - Twitter: [@sagieramos](https://twitter.com/sagieramos)
 - LinkedIn: [LinkedIn](https://linkedin.com/in/sagieramos)
+  
+👤 **Nilab Khwajazada**
+
+- GitHub: [@nilab-khwaja](https://github.com/nilab-khwaja)
+- Twitter: [@nilab](https://x.com/NilabKhwajazada?t=hEkqy2CCNFOIfGtbmD2gLA&s=35)
+- LinkedIn: [@nilab-khwajazada](https://www.linkedin.com/in/nilab-khwajazada)
+
+👤 **Jubaer Maruf**
+
+- GitHub: [jubaer_Maruf](https://github.com/jubaer919)
+- Twitter: [@jubaer_maruf](https://twitter.com/jubaer_maruf)
+- LinkedIn: [Jubaer Maruf](https://www.linkedin.com/in/jubaer-maruf/)
+
+👤 **Lawmsangi Varte**
+
+- GitHub: [@githubhandle](https://github.com/Lawmsangi)
+- YouTube: [@youtubehandle](https://www.youtube.com/channel/UCnV00wwMfHR3gRnHORnDRXw)
+- LinkedIn: [LinkedIn](https://www.linkedin.com/in/lawmsangi-varte-baa429244/)
+
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
