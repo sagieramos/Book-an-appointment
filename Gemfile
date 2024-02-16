@@ -21,7 +21,6 @@ group :development, :test do
   gem 'rubocop', '>= 1.0', '< 2.0'
 end
 
-
 gem 'devise', '~> 4.9'
 
 gem 'devise-jwt', '~> 0.11.0'
